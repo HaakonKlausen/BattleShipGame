@@ -7,9 +7,10 @@ import java.util.Random;
 /**
  * Created by y00hkl on 13.01.2016.
  */
-public class BattleShipGame {
-    static int cMaxRows = 8;
-    static int cMaxColumns = 8;
+class BattleShipGame {
+    static int cMaxRows = 9;
+    static int cMaxColumns = 9;
+    static int cMaxBattleshipLength = 5;
     static int cNumberOfBattleships = 3;
     static String letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     static int cDirectionHorizontal = 0;
@@ -35,6 +36,10 @@ public class BattleShipGame {
         if (command.equals("exit")) {
             System.out.println("You lost the war after fireing " + roundsFired + " Missils");
             return true;
+        }
+        if (command.equals("print")) {
+            this.printGame();
+            return false;
         }
 
         // We did not exit, so carry on
@@ -123,6 +128,34 @@ public class BattleShipGame {
         return position;
     }
 
+    private void printGame() {
+        for(int row=0; row <= cMaxRows; row++) {
+            System.out.print(String.valueOf(row) + " ");
+            for (int col=0; col <= cMaxColumns; col++) {
+                String coordinate = new String(letters.charAt(col) + String.valueOf(row));
+                boolean shipAtCoordinate = false;
+                for (int ship=0; ship < battleShips.length; ship++) {
+
+                    if (battleShips[ship].isAtSquare(coordinate)) {
+                        shipAtCoordinate = true;
+                    }
+                }
+                if (shipAtCoordinate) {
+                    System.out.print("| X ");
+                }
+                else {
+                    System.out.print("|   ");
+                }
+            }
+            System.out.println("|");
+        }
+        System.out.print("  ");
+        for (int col=0; col <= cMaxColumns; col++) {
+            System.out.print("| " + letters.charAt(col) + " ");
+        }
+        System.out.println("|");
+    }
+
     // Generate a battleShip position that may not be free
     private String[] generateBattleshipPosition() {
         int battleshipLength;
@@ -135,7 +168,7 @@ public class BattleShipGame {
         String[] position;
         Random randomGenerator = new Random();
 
-        battleshipLength = randomGenerator.nextInt(5) + 1;  // 1 to 5
+        battleshipLength = randomGenerator.nextInt(cMaxBattleshipLength) + 1;  // 1 to 5
         position = new String[battleshipLength];
 
         // Find direction, 0=left to right, 1=up to down
